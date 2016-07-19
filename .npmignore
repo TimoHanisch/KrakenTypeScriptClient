@@ -1,0 +1,9 @@
+.vscode/
+typings/
+node_modules/
+*.d.ts
+*.log
+*.tgz
+
+!index.d.ts
+!index.ref.d.ts

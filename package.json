@@ -1,0 +1,32 @@
+{
+  "name": "kraken-client-ts",
+  "version": "0.0.1",
+  "description": "Client for the kraken.com API written in TypeScript",
+  "keywords": [
+    "kraken",
+    "api",
+    "client",
+    "ts",
+    "typescript"
+  ],
+  "main": "dist/client.js",
+  "typings": "dist/client",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Timo Hanisch (https://github.com/timohanisch)",
+  "license": "MIT",
+  "dependencies": {
+    "querystring": ">=0.2.0",
+    "request": ">=2.27.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/timohanisch/kraken-client-ts"
+  },
+  "bugs": {
+    "url": "https://github.com/timohanisch/kraken-client-ts/issues",
+    "email": "timohanisch8@gmail.com"
+  },
+  "readmeFilename": "README.md"
+}
