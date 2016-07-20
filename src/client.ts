@@ -19,8 +19,12 @@ export class KrakenClient {
             key: key,
             secret: secret,
             otp: null,
-            timeoutMS: 5000
+            timeout: 5000
         };
+    }
+
+    public set timeout(milliseconds: number) {
+        this.config.timeout = milliseconds;
     }
 
     public getTime(callback: Function) {
@@ -134,7 +138,7 @@ export class KrakenClient {
     public cancelWithdraw(params, callback: Function) {
         return this.privateMethod("WithdrawCancel", params, callback);
     }
-    
+
     private publicMethod(method: string, params, callback: Function) {
         params = params || {};
 
@@ -166,7 +170,7 @@ export class KrakenClient {
 
         return this.rawRequest(url, headers, params, callback);
     }
-    
+
     private getMessageSignature(path: string, request, nonce: number) {
         var message = querystring.stringify(request);
         var secret = new Buffer(this.config.secret, 'base64');
@@ -178,7 +182,7 @@ export class KrakenClient {
 
         return hmac_digest;
     }
-    
+
     private rawRequest(url: string, headers, params, callback: Function) {
         // Set custom User-Agent string
         headers['User-Agent'] = 'Kraken Typescript API Client';
@@ -188,40 +192,36 @@ export class KrakenClient {
             method: 'POST',
             headers: headers,
             form: params,
-            timeout: this.config.timeoutMS
+            timeout: this.config.timeout
         };
 
         var req = request.post(options, function (error, response, body) {
-            if (typeof callback === 'function') {
-                var data;
+            var data;
 
-                if (error) {
-                    return callback.call(this, new Error('Error in server response: ' + JSON.stringify(error)), null);
-                }
+            if (error) {
+                return callback.call(this, new Error('Error in server response: ' + JSON.stringify(error)), null);
+            }
 
-                try {
-                    data = JSON.parse(body);
-                }
-                catch (e) {
-                    return callback.call(this, new Error('Could not understand response from server: ' + body), null);
-                }
-                //If any errors occured, Kraken will give back an array with error strings under
-                //the key "error". We should then propagate back the error message as a proper error.
-                if (data.error && data.error.length) {
-                    var krakenError = null;
-                    data.error.forEach(function (element) {
-                        if (element.charAt(0) === "E") {
-                            krakenError = element.substr(1);
-                            return false;
-                        }
-                    });
-                    if (krakenError) {
-                        return callback.call(this, new Error('Kraken API returned error: ' + krakenError), null);
+            try {
+                data = JSON.parse(body);
+            } catch (e) {
+                return callback.call(this, new Error('Could not understand response from server: ' + body), null);
+            }
+            //If any errors occured, Kraken will give back an array with error strings under
+            //the key "error". We should then propagate back the error message as a proper error.
+            if (data.error && data.error.length) {
+                var krakenError = null;
+                data.error.forEach(function (element) {
+                    if (element.charAt(0) === "E") {
+                        krakenError = element.substr(1);
+                        return false;
                     }
+                });
+                if (krakenError) {
+                    return callback.call(this, new Error('Kraken API returned error: ' + krakenError), null);
                 }
-                else {
-                    return callback.call(this, null, data);
-                }
+            } else {
+                return callback.call(this, null, data);
             }
         });
         return req;

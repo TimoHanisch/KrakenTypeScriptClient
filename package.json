@@ -12,20 +12,24 @@
   "main": "dist/client.js",
   "typings": "dist/client",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run test-node",
+    "test-node": "mocha -R spec ./test/client.js"
   },
   "author": "Timo Hanisch (https://github.com/timohanisch)",
   "license": "MIT",
   "dependencies": {
-    "querystring": ">=0.2.0",
-    "request": ">=2.27.0"
+    "assert": "^1.4.1",
+    "crypto": "0.0.3",
+    "querystring": "^0.2.0",
+    "request": "^2.73.0",
+    "sinon": "^1.17.4"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/timohanisch/kraken-client-ts"
+    "url": "https://github.com/TimoHanisch/KrakenTypeScriptClient"
   },
   "bugs": {
-    "url": "https://github.com/timohanisch/kraken-client-ts/issues",
+    "url": "https://github.com/TimoHanisch/KrakenTypeScriptClient/issues",
     "email": "timohanisch8@gmail.com"
   },
   "readmeFilename": "README.md"
