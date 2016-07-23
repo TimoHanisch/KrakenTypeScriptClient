@@ -5,26 +5,49 @@ import request = require('request');
 import crypto = require('crypto');
 import querystring = require('querystring');
 /**
- * The KrakenClient offers
+ * The KrakenClient offers methods for calling the Kraken API as
+ * described here: https://www.kraken.com/help/api
  *
+ * @version 0.0.1
  * @author Timo Hanisch <timohanisch@gmail.com>
  */
 export class KrakenClient {
 
     private config;
 
-    public constructor(key: string, secret: string) {
+    public constructor() {
         this.config = {
             url: 'https://api.kraken.com',
             version: '0',
-            key: key,
-            secret: secret,
             timeout: 5000
         };
     }
 
-    public set timeout(milliseconds: number) {
+    public setTimeout(milliseconds: number) {
         this.config.timeout = milliseconds;
+        return this;
+    }
+
+    public get timeout() {
+        return this.config.timeout;
+    }
+
+    public setKey(key: string) {
+        this.config.key = key;
+        return this;
+    }
+
+    public get key() {
+        return this.config.key;
+    }
+
+    public setSecret(secret: string) {
+        this.config.secret = secret;
+        return this;
+    }
+
+    public get secret() {
+        return this.config.secret;
     }
 
     public getTime(callback: Function) {
@@ -147,25 +170,29 @@ export class KrakenClient {
     }
 
     private privateMethod(method: string, params, callback: Function) {
-        params = params || {};
+        if (this.config.key && this.config.secret) {
+            params = params || {};
 
-        var path = `/${this.config.version}/private/${method}`;
-        var url = this.config.url + path;
-        var currentMillis: Date = new Date();
+            var path = `/${this.config.version}/private/${method}`;
+            var url = this.config.url + path;
+            var currentMillis: Date = new Date();
 
-        params.nonce = currentMillis.getTime() * 1000; // spoof milliseconds
+            params.nonce = currentMillis.getTime() * 1000; // spoof milliseconds
 
-        var signature = this.getMessageSignature(path, params, params.nonce);
+            var signature = this.getMessageSignature(path, params, params.nonce);
 
-        var headers = {
-            'API-Key': this.config.key,
-            'API-Sign': signature
-        };
+            var headers = {
+                'API-Key': this.config.key,
+                'API-Sign': signature
+            };
 
-        return this.rawRequest(url, headers, params, callback);
+            return this.rawRequest(url, headers, params, callback);
+        } else {
+            return callback.call(this, new Error(`The API key or secret are not set: [key: ${this.config.key}, secret: ${this.config.secret}]`), null);
+        }
     }
 
-    protected getMessageSignature(path: string, request, nonce: number) {
+    private getMessageSignature(path: string, request, nonce: number) {
         var message = querystring.stringify(request);
         var secret = new Buffer(this.config.secret, 'base64');
         var hash = crypto.createHash('sha256');
@@ -177,7 +204,7 @@ export class KrakenClient {
         return hmacDigest;
     }
 
-    protected rawRequest(url: string, headers, params, callback: Function) {
+    private rawRequest(url: string, headers, params, callback: Function) {
         // Set custom User-Agent string
         headers['User-Agent'] = 'Kraken Typescript API Client';
 
@@ -193,13 +220,13 @@ export class KrakenClient {
             var data;
 
             if (error) {
-                return callback.call(this, new Error('Error in server response: ' + JSON.stringify(error)), null);
+                return callback.call(this, new Error(`Error in server response: ${JSON.stringify(error)}`), null);
             }
 
             try {
                 data = JSON.parse(body);
             } catch (e) {
-                return callback.call(this, new Error('Could not understand response from server: ' + body), null);
+                return callback.call(this, new Error(`Could not understand response from server: ${body}`), null);
             }
             //If any errors occured, Kraken will give back an array with error strings under
             //the key "error". We should then propagate back the error message as a proper error.
@@ -212,7 +239,7 @@ export class KrakenClient {
                     }
                 });
                 if (krakenError) {
-                    return callback.call(this, new Error('Kraken API returned error: ' + krakenError), null);
+                    return callback.call(this, new Error(`Kraken API returned an error: ${krakenError}`), null);
                 }
             } else {
                 return callback.call(this, null, data);
