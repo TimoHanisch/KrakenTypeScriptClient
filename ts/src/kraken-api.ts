@@ -1,12 +1,13 @@
-/// <reference path="../typings/index.d.ts" />
+/// <reference path="../../typings/index.d.ts" />
 
 
 import request = require('request');
 import crypto = require('crypto');
 import querystring = require('querystring');
-
 /**
+ * The KrakenClient offers
  *
+ * @author Timo Hanisch <timohanisch@gmail.com>
  */
 export class KrakenClient {
 
@@ -164,19 +165,19 @@ export class KrakenClient {
         return this.rawRequest(url, headers, params, callback);
     }
 
-    private getMessageSignature(path: string, request, nonce: number) {
+    protected getMessageSignature(path: string, request, nonce: number) {
         var message = querystring.stringify(request);
         var secret = new Buffer(this.config.secret, 'base64');
         var hash = crypto.createHash('sha256');
         var hmac = crypto.createHmac('sha512', secret);
 
-        var hash_digest = hash.update(nonce + message).digest('binary');
-        var hmac_digest = hmac.update(path + hash_digest, 'binary').digest('base64');
+        var hashDigest = hash.update(nonce + message).digest('binary');
+        var hmacDigest = hmac.update(path + hashDigest, 'binary').digest('base64');
 
-        return hmac_digest;
+        return hmacDigest;
     }
 
-    private rawRequest(url: string, headers, params, callback: Function) {
+    protected rawRequest(url: string, headers, params, callback: Function) {
         // Set custom User-Agent string
         headers['User-Agent'] = 'Kraken Typescript API Client';
 

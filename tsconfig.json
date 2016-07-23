@@ -7,6 +7,6 @@
 		"outDir": "dist"
 	},
 	"files": [
-		"src/kraken-api.ts"
+		"ts/src/kraken-api.ts", "ts/test/kraken-api-tests.ts"
 	]
 }
