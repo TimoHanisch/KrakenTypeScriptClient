@@ -18,7 +18,6 @@ export class KrakenClient {
             version: '0',
             key: key,
             secret: secret,
-            otp: null,
             timeout: 5000
         };
     }
@@ -141,9 +140,7 @@ export class KrakenClient {
 
     private publicMethod(method: string, params, callback: Function) {
         params = params || {};
-
-        var path = '/' + this.config.version + '/public/' + method;
-        var url = this.config.url + path;
+        var url = `${this.config.url}/${this.config.version}/public/${method}`;
 
         return this.rawRequest(url, {}, params, callback);
     }
@@ -151,15 +148,11 @@ export class KrakenClient {
     private privateMethod(method: string, params, callback: Function) {
         params = params || {};
 
-        var path = '/' + this.config.version + '/private/' + method;
+        var path = `/${this.config.version}/private/${method}`;
         var url = this.config.url + path;
         var currentMillis: Date = new Date();
 
         params.nonce = currentMillis.getTime() * 1000; // spoof milliseconds
-
-        if (this.config.otp !== undefined) {
-            params.otp = this.config.otp;
-        }
 
         var signature = this.getMessageSignature(path, params, params.nonce);
 

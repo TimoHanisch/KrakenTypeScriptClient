@@ -1,2 +1,2 @@
-Kraken TypeScript Client
+Kraken TypeScript API
 ===========

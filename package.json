@@ -9,11 +9,11 @@
     "ts",
     "typescript"
   ],
-  "main": "dist/client.js",
+  "main": "dist/kraken-api.js",
   "typings": "dist/client",
   "scripts": {
     "test": "npm run test-node",
-    "test-node": "mocha -R spec ./test/client.js"
+    "test-node": "mocha -R spec ./test/kraken-api-tests.js"
   },
   "author": "Timo Hanisch (https://github.com/timohanisch)",
   "license": "MIT",

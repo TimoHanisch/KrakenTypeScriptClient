@@ -1,7 +1,8 @@
 var assert = require("assert");
 var request = require('request');
 var sinon = require('sinon');
-var client = require('../dist/client.js')
+var KrakenAPI = require('../dist/kraken-api')
+
 
 describe('KrakenClient', function () {
     describe('#rawRequest()', function () {
@@ -10,7 +11,7 @@ describe('KrakenClient', function () {
             sinon
                 .stub(request, 'post')
                 .yields("An error occured", null, null);
-            var krakenClient = new client.KrakenClient("test-key", "test-secret");
+            var krakenClient = new KrakenAPI.KrakenClient("test-key", "test-secret");
             krakenClient.rawRequest("test-url", [], [], function (error, data) {
                 assert.notEqual(error, null, "Error should not be null");
                 assert.notEqual(error, undefined, "Error should not be undefined");
@@ -27,7 +28,7 @@ describe('KrakenClient', function () {
             sinon
                 .stub(request, 'post')
                 .yields(null, null, "{falfa");
-            var krakenClient = new client.KrakenClient("test-key", "test-secret");
+            var krakenClient = new KrakenAPI.KrakenClient("test-key", "test-secret");
             krakenClient.rawRequest("test-url", [], [], function (error, data) {
                 assert.notEqual(error, null, "Error should not be null");
                 assert.notEqual(error, undefined, "Error should not be undefined");
