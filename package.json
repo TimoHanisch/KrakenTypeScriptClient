@@ -34,6 +34,9 @@
     "url": "https://github.com/TimoHanisch/KrakenTypeScriptClient/issues",
     "email": "timohanisch8@gmail.com"
   },
+  "typescript" : {
+    "definition" : "dist/src/kraken-api.d.ts"
+  },
   "readmeFilename": "README.md",
   "devDependencies": {}
 }
